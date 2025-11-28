@@ -8,8 +8,6 @@ import java.sql.SQLException;
  * Database connection utility class.
  * Handles connecting and disconnecting from the MySQL world database.
  *ss
- * Author: Israel Ayemo
- * Matric: 40730778
  */
 public class Database {
 
@@ -56,3 +54,4 @@ public class Database {
         }
     }
 }
+
