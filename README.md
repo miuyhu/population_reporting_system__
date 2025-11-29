@@ -18,7 +18,7 @@ This project is a **Population Reporting System** developed as part of the **SET
 | 7 | Language statistics showing the number of people speaking Chinese, English, Hindi, Spanish, and Arabic (with percentage of world population). | Yes | ![Requirement 7](docs/screenshots/requirement7_languages.png) |
 | 8 | Top N cities in a district organised by largest population to smallest. | Yes | ![Requirement 8](docs/screenshots/requirement8_district.png) |
 
-**Note:** Screenshots should be captured from the application output when running the reports. Place screenshots in the `docs/screenshots/` directory with the filenames specified above.
+
 
 ## Features
 - Generate country, city, and capital city reports:
@@ -221,3 +221,4 @@ Awin Aniyachan
 https://livenapierac-my.sharepoint.com/:x:/r/personal/40730778_live_napier_ac_uk/Documents/Group%20Contribution.xlsx?d=w1901c9fc02ea40bcac1b2b633fa8e833&e=4%3a3fc914a6571747118bd2bb11cab6e6ea&sharingv2=true&fromShare=true&at=9
 
 .
+
