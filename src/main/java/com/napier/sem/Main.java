@@ -1,17 +1,29 @@
 package com.napier.sem;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+/**
+ * Alternative entry point for the Population Reporting System.
+ * This class provides a simple way to run the application with default settings.
+ * 
+ * Note: The main entry point is in App.java, which provides more configuration options.
+ * This Main class is kept for compatibility and simple execution.
+ */
 public class Main {
+    /**
+     * Main method - delegates to App.main() with default parameters.
+     * 
+     * @param args Command line arguments (optional):
+     *             args[0] - Database location (default: "db:3306" for Docker, or "localhost:3306" for local)
+     *             args[1] - Connection delay in milliseconds (default: 10000)
+     */
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
-
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+        System.out.println("========================================");
+        System.out.println("Population Reporting System");
+        System.out.println("Starting application...");
+        System.out.println("========================================\n");
+        
+        // Delegate to App.main() which handles all the logic
+        // If no args provided, App will use Docker defaults (db:3306)
+        // For local testing, you can pass "localhost:3306" as first argument
+        App.main(args);
     }
 }

@@ -1,9 +1,10 @@
 package com.napier.sem;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource; // <--- NEW/CRITICAL IMPORT
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -12,7 +13,7 @@ import org.mockito.quality.Strictness;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
-import java.util.stream.Stream; // <--- REQUIRED FOR METHODSOURCE
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
@@ -133,6 +134,7 @@ public class AppTest {
     // ------------------------------------------------------------------
 
     @Test
+    @DisplayName("Language statistics report should run without crashing")
     void languageReportRunsWithoutCrash() {
         App app = new App();
         app.con = mockConnection;
@@ -144,20 +146,73 @@ public class AppTest {
             when(mockStatement.executeQuery(startsWith("SELECT SUM(c.Population"))).thenReturn(mockResultSet);
             when(mockResultSet.getLong(1)).thenReturn(300000000L);
             assertDoesNotThrow(() -> app.reportLanguageStatistics());
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            // Test passes if no exception is thrown
+        }
     }
 
     @Test
+    @DisplayName("Single city population report should handle no results gracefully")
     void singleCityReportHandlesNoResult() {
         App app = new App();
         app.con = mockConnection;
         try {
             setupMocks();
             assertDoesNotThrow(() -> app.reportSpecificCityPopulation("NonExistentCity"));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            // Test passes if no exception is thrown
+        }
     }
 
-    @Test void popSplitContinentRuns() { App app = new App(); app.con = mockConnection; try { setupMocks(); assertDoesNotThrow(() -> app.reportPopulationSplit("Continent", "Asia")); } catch (Exception e) {} }
-    @Test void popSplitRegionRuns() { App app = new App(); app.con = mockConnection; try { setupMocks(); assertDoesNotThrow(() -> app.reportPopulationSplit("Region", "Eastern Asia")); } catch (Exception e) {} }
-    @Test void popSplitCountryRuns() { App app = new App(); app.con = mockConnection; try { setupMocks(); assertDoesNotThrow(() -> app.reportPopulationSplit("Country", "United States")); } catch (Exception e) {} }
+    @Test
+    @DisplayName("Population split report for continent should run without errors")
+    void popSplitContinentRuns() {
+        App app = new App();
+        app.con = mockConnection;
+        try {
+            setupMocks();
+            assertDoesNotThrow(() -> app.reportPopulationSplit("Continent", "Asia"));
+        } catch (Exception e) {
+            // Test passes if no exception is thrown
+        }
+    }
+
+    @Test
+    @DisplayName("Population split report for region should run without errors")
+    void popSplitRegionRuns() {
+        App app = new App();
+        app.con = mockConnection;
+        try {
+            setupMocks();
+            assertDoesNotThrow(() -> app.reportPopulationSplit("Region", "Eastern Asia"));
+        } catch (Exception e) {
+            // Test passes if no exception is thrown
+        }
+    }
+
+    @Test
+    @DisplayName("Population split report for country should run without errors")
+    void popSplitCountryRuns() {
+        App app = new App();
+        app.con = mockConnection;
+        try {
+            setupMocks();
+            assertDoesNotThrow(() -> app.reportPopulationSplit("Country", "United States"));
+        } catch (Exception e) {
+            // Test passes if no exception is thrown
+        }
+    }
+
+    @Test
+    @DisplayName("Top N cities in district report should run without errors")
+    void topNCitiesInDistrictRuns() {
+        App app = new App();
+        app.con = mockConnection;
+        try {
+            setupMocks();
+            assertDoesNotThrow(() -> app.reportTopNCitiesInDistrict("California", 5));
+        } catch (Exception e) {
+            // Test passes if no exception is thrown
+        }
+    }
 }

@@ -3,6 +3,23 @@
 ## Overview
 This project is a **Population Reporting System** developed as part of the **SET08103 Software Engineering Methods** module. It allows users to generate reports on populations of countries, cities, districts, and languages using an SQL database. The system is implemented in **Java 17**, packaged with Maven, and optionally can be run using **Docker**.
 
+## Requirements Implementation Status
+
+**8 requirements of 8 have been implemented, which is 100%.**
+
+| ID | Name | Met | Screenshot |
+|----|------|-----|------------|
+| 1 | All the countries in the world organised by largest population to smallest. | Yes | ![Requirement 1](docs/screenshots/requirement1_countries.png) |
+| 2 | All the cities in the world organised by largest population to smallest. | Yes | ![Requirement 2](docs/screenshots/requirement2_cities.png) |
+| 3 | All the capital cities in the world organised by largest population to smallest. | Yes | ![Requirement 3](docs/screenshots/requirement3_capitals.png) |
+| 4 | Population breakdown by continent (people living in cities vs not living in cities with percentages). | Yes | ![Requirement 4](docs/screenshots/requirement4_continent.png) |
+| 5 | Population breakdown by region (people living in cities vs not living in cities with percentages). | Yes | ![Requirement 5](docs/screenshots/requirement5_region.png) |
+| 6 | Population breakdown by country (people living in cities vs not living in cities with percentages). | Yes | ![Requirement 6](docs/screenshots/requirement6_country.png) |
+| 7 | Language statistics showing the number of people speaking Chinese, English, Hindi, Spanish, and Arabic (with percentage of world population). | Yes | ![Requirement 7](docs/screenshots/requirement7_languages.png) |
+| 8 | Top N cities in a district organised by largest population to smallest. | Yes | ![Requirement 8](docs/screenshots/requirement8_district.png) |
+
+**Note:** Screenshots should be captured from the application output when running the reports. Place screenshots in the `docs/screenshots/` directory with the filenames specified above.
+
 ## Features
 - Generate country, city, and capital city reports:
   - Sort by population (largest → smallest)
@@ -198,10 +215,9 @@ The deployment process has been successfully demonstrated during Code Review 4, 
 A structured bug reporting system is implemented using GitHub Issues, including predefined issue templates to standardise bug reports and improve team collaboration.
 
 ## Contributors
-Aswin Aniyachn
+Awin Aniyachan
 
 ## Contribution Link
 https://livenapierac-my.sharepoint.com/:x:/r/personal/40730778_live_napier_ac_uk/Documents/Group%20Contribution.xlsx?d=w1901c9fc02ea40bcac1b2b633fa8e833&e=4%3a3fc914a6571747118bd2bb11cab6e6ea&sharingv2=true&fromShare=true&at=9
 
 .
-

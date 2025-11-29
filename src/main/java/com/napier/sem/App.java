@@ -59,49 +59,189 @@ public class App {
     // ----------------------------------------------------------------------
 
     /**
-     * REQUIREMENT: Generic Country Report (All countries in World, Continent, or Region)
-     * This method is called by the parameterized unit tests.
+     * REQUIREMENT 1: All the countries in the world organised by largest population to smallest.
+     * This method can also filter by Continent or Region.
      */
     public void reportCountries(String areaType, String name) {
-        String whereClause = (areaType.equals("World")) ? "" : "WHERE " + areaType + " = '" + name + "'";
-        String title = (areaType.equals("World")) ? "All Countries in the World" : "All Countries in " + name;
+        String whereClause = "";
+        String title = "All Countries in the World";
+        
+        if (!areaType.equals("World") && !name.isEmpty()) {
+            whereClause = "WHERE " + areaType + " = '" + name + "'";
+            title = "All Countries in " + name;
+        }
 
         try {
             Statement stmt = con.createStatement();
             String strSelect =
-                    "SELECT Code, Name, Continent, Region, Population, Capital " +
+                    "SELECT country.Code, country.Name, country.Continent, country.Region, country.Population, " +
+                            "COALESCE(city.Name, 'N/A') AS CapitalName " +
                             "FROM country " +
+                            "LEFT JOIN city ON country.Capital = city.ID " +
                             whereClause +
-                            " ORDER BY Population DESC";
+                            " ORDER BY country.Population DESC";
 
             ResultSet rset = stmt.executeQuery(strSelect);
 
-            // Output is suppressed here for stable unit testing
-            System.out.println("\n--- RUNNING REPORT: " + title + " ---");
+            System.out.println("\n--------------------------------------------------------------------------------");
+            System.out.println(title.toUpperCase());
+            System.out.println("--------------------------------------------------------------------------------");
+            System.out.printf("%-5s %-45s %-15s %-30s %-15s %-30s%n", 
+                    "Code", "Name", "Continent", "Region", "Population", "Capital");
+            System.out.println("--------------------------------------------------------------------------------");
+
+            int count = 0;
+            while (rset.next()) {
+                System.out.printf("%-5s %-45s %-15s %-30s %-15d %-30s%n",
+                        rset.getString("Code"),
+                        rset.getString("Name"),
+                        rset.getString("Continent"),
+                        rset.getString("Region"),
+                        rset.getLong("Population"),
+                        rset.getString("CapitalName"));
+                count++;
+            }
+            System.out.println("--------------------------------------------------------------------------------");
+            System.out.println("Total countries: " + count);
+            System.out.println("--------------------------------------------------------------------------------\n");
 
         } catch (Exception e) {
             System.out.println("Failed to get report: " + title);
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     /**
-     * REQUIREMENT: Generic City Report (All cities in World, Continent, Region, Country, or District)
-     * This method is called by the parameterized unit tests.
+     * REQUIREMENT 2: All the cities in the world organised by largest population to smallest.
+     * This method can also filter by Continent, Region, Country, or District.
      */
     public void reportCities(String areaType, String name) {
-        String title = (areaType.equals("World")) ? "All Cities in the World" : "All Cities in " + name;
-        System.out.println("\n--- RUNNING CITY REPORT: " + title + " ---");
-        // Actual SQL logic for fetching cities would reside here.
+        String title = "All Cities in the World";
+        String sql = "";
+
+        try {
+            Statement stmt = con.createStatement();
+            
+            if (areaType.equals("World")) {
+                sql = "SELECT city.Name, country.Name AS CountryName, city.District, city.Population " +
+                      "FROM city " +
+                      "JOIN country ON city.CountryCode = country.Code " +
+                      "ORDER BY city.Population DESC";
+            } else if (areaType.equals("Continent")) {
+                sql = "SELECT city.Name, country.Name AS CountryName, city.District, city.Population " +
+                      "FROM city " +
+                      "JOIN country ON city.CountryCode = country.Code " +
+                      "WHERE country.Continent = '" + name + "' " +
+                      "ORDER BY city.Population DESC";
+                title = "All Cities in " + name + " (Continent)";
+            } else if (areaType.equals("Region")) {
+                sql = "SELECT city.Name, country.Name AS CountryName, city.District, city.Population " +
+                      "FROM city " +
+                      "JOIN country ON city.CountryCode = country.Code " +
+                      "WHERE country.Region = '" + name + "' " +
+                      "ORDER BY city.Population DESC";
+                title = "All Cities in " + name + " (Region)";
+            } else if (areaType.equals("Country")) {
+                sql = "SELECT city.Name, country.Name AS CountryName, city.District, city.Population " +
+                      "FROM city " +
+                      "JOIN country ON city.CountryCode = country.Code " +
+                      "WHERE country.Name = '" + name + "' " +
+                      "ORDER BY city.Population DESC";
+                title = "All Cities in " + name + " (Country)";
+            } else if (areaType.equals("District")) {
+                sql = "SELECT city.Name, country.Name AS CountryName, city.District, city.Population " +
+                      "FROM city " +
+                      "JOIN country ON city.CountryCode = country.Code " +
+                      "WHERE city.District = '" + name + "' " +
+                      "ORDER BY city.Population DESC";
+                title = "All Cities in " + name + " (District)";
+            }
+
+            ResultSet rset = stmt.executeQuery(sql);
+
+            System.out.println("\n--------------------------------------------------------------------------------");
+            System.out.println(title.toUpperCase());
+            System.out.println("--------------------------------------------------------------------------------");
+            System.out.printf("%-40s %-40s %-30s %-15s%n", 
+                    "Name", "Country", "District", "Population");
+            System.out.println("--------------------------------------------------------------------------------");
+
+            int count = 0;
+            while (rset.next()) {
+                System.out.printf("%-40s %-40s %-30s %-15d%n",
+                        rset.getString("Name"),
+                        rset.getString("CountryName"),
+                        rset.getString("District"),
+                        rset.getLong("Population"));
+                count++;
+            }
+            System.out.println("--------------------------------------------------------------------------------");
+            System.out.println("Total cities: " + count);
+            System.out.println("--------------------------------------------------------------------------------\n");
+
+        } catch (Exception e) {
+            System.out.println("Failed to get report: " + title);
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
     /**
-     * REQUIREMENT: Generic Capital City Report (All capital cities in World, Continent, or Region)
-     * This method is called by the parameterized unit tests.
+     * REQUIREMENT 3: All the capital cities in the world organised by largest population to smallest.
+     * This method can also filter by Continent or Region.
      */
     public void reportCapitalCities(String areaType, String name) {
-        String title = (areaType.equals("World")) ? "All Capital Cities in the World" : "All Capital Cities in " + name;
-        System.out.println("\n--- RUNNING CAPITAL CITY REPORT: " + title + " ---");
-        // Actual SQL logic for fetching capitals would reside here.
+        String title = "All Capital Cities in the World";
+        String sql = "";
+
+        try {
+            Statement stmt = con.createStatement();
+            
+            if (areaType.equals("World")) {
+                sql = "SELECT city.Name, country.Name AS CountryName, city.Population " +
+                      "FROM city " +
+                      "JOIN country ON city.ID = country.Capital " +
+                      "ORDER BY city.Population DESC";
+            } else if (areaType.equals("Continent")) {
+                sql = "SELECT city.Name, country.Name AS CountryName, city.Population " +
+                      "FROM city " +
+                      "JOIN country ON city.ID = country.Capital " +
+                      "WHERE country.Continent = '" + name + "' " +
+                      "ORDER BY city.Population DESC";
+                title = "All Capital Cities in " + name + " (Continent)";
+            } else if (areaType.equals("Region")) {
+                sql = "SELECT city.Name, country.Name AS CountryName, city.Population " +
+                      "FROM city " +
+                      "JOIN country ON city.ID = country.Capital " +
+                      "WHERE country.Region = '" + name + "' " +
+                      "ORDER BY city.Population DESC";
+                title = "All Capital Cities in " + name + " (Region)";
+            }
+
+            ResultSet rset = stmt.executeQuery(sql);
+
+            System.out.println("\n--------------------------------------------------------------------------------");
+            System.out.println(title.toUpperCase());
+            System.out.println("--------------------------------------------------------------------------------");
+            System.out.printf("%-40s %-40s %-15s%n", 
+                    "Name", "Country", "Population");
+            System.out.println("--------------------------------------------------------------------------------");
+
+            int count = 0;
+            while (rset.next()) {
+                System.out.printf("%-40s %-40s %-15d%n",
+                        rset.getString("Name"),
+                        rset.getString("CountryName"),
+                        rset.getLong("Population"));
+                count++;
+            }
+            System.out.println("--------------------------------------------------------------------------------");
+            System.out.println("Total capital cities: " + count);
+            System.out.println("--------------------------------------------------------------------------------\n");
+
+        } catch (Exception e) {
+            System.out.println("Failed to get report: " + title);
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
 
@@ -110,7 +250,7 @@ public class App {
     // ----------------------------------------------------------------------
 
     /**
-     * REQUIREMENT: Language Statistics (Chinese, English, Hindi, Spanish, Arabic)
+     * REQUIREMENT 7: Language statistics showing the number of people speaking Chinese, English, Hindi, Spanish, and Arabic (with percentage of world population).
      * Shows total speakers and percentage of the world population.
      */
     public void reportLanguageStatistics() {
@@ -156,7 +296,8 @@ public class App {
     }
 
     /**
-     * REQUIREMENT: Population Split Report (Total vs. In Cities vs. Not in Cities)
+     * REQUIREMENT 4/5/6: Population breakdown by continent/region/country (people living in cities vs not living in cities with percentages).
+     * Shows total population, population in cities, and population not in cities with percentages.
      */
     public void reportPopulationSplit(String type, String name) {
         String title = type.toUpperCase() + ": " + name;
@@ -212,7 +353,7 @@ public class App {
     }
 
     /**
-     * REQUIREMENT: Top N Cities in a District
+     * REQUIREMENT 8: Top N cities in a district organised by largest population to smallest.
      */
     public void reportTopNCitiesInDistrict(String district, int n) {
         try {
@@ -282,26 +423,42 @@ public class App {
         a.connect(dbLocation, dbDelay);
 
         if (a.con != null) {
-            System.out.println("\n--- GENERATING FINAL ASSESSMENT REPORTS ---");
+            System.out.println("\n==================================================================================");
+            System.out.println("                    POPULATION REPORTING SYSTEM");
+            System.out.println("                    GENERATING ALL REPORTS");
+            System.out.println("==================================================================================\n");
 
-            // 1. Language Report
-            a.reportLanguageStatistics();
+            // REQUIREMENT 1: All the countries in the world organised by largest population to smallest
+            System.out.println("REQUIREMENT 1: All Countries in the World");
+            a.reportCountries("World", "");
 
-            // 2. Population Split Report (Continent, Region, Country)
+            // REQUIREMENT 2: All the cities in the world organised by largest population to smallest
+            System.out.println("REQUIREMENT 2: All Cities in the World");
+            a.reportCities("World", "");
+
+            // REQUIREMENT 3: All the capital cities in the world organised by largest population to smallest
+            System.out.println("REQUIREMENT 3: All Capital Cities in the World");
+            a.reportCapitalCities("World", "");
+
+            // REQUIREMENT 4: Population breakdown by Continent
+            System.out.println("REQUIREMENT 4: Population Breakdown by Continent");
             a.reportPopulationSplit("Continent", "Asia");
+
+            // REQUIREMENT 5: Population breakdown by Region
+            System.out.println("REQUIREMENT 5: Population Breakdown by Region");
             a.reportPopulationSplit("Region", "Western Europe");
+
+            // REQUIREMENT 6: Population breakdown by Country
+            System.out.println("REQUIREMENT 6: Population Breakdown by Country");
             a.reportPopulationSplit("Country", "France");
 
-            // 3. District Report (Top N)
+            // REQUIREMENT 7: Language Statistics
+            System.out.println("REQUIREMENT 7: Language Statistics");
+            a.reportLanguageStatistics();
+
+            // REQUIREMENT 8: Top N Cities in a District
+            System.out.println("REQUIREMENT 8: Top N Cities in a District");
             a.reportTopNCitiesInDistrict("California", 5);
-
-            // 4. Single Population Check
-            a.reportSpecificCityPopulation("Edinburgh");
-
-            // 5. General Report Stubs (Ensure testing methods have something to call)
-            a.reportCountries("World", "");
-            a.reportCities("World", "");
-            a.reportCapitalCities("World", "");
         }
 
         a.disconnect();
